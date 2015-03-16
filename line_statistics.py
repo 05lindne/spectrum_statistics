@@ -68,7 +68,7 @@ for index, item in enumerate(patches):
 
 plt.xlabel('Linewidth (nm)', fontsize = label_fontsize)
 plt.ylabel('Quantity', fontsize = label_fontsize)
-plt.title('Title', fontsize = title_fontsize)
+# plt.title('Title', fontsize = title_fontsize)
 
 # Set the tick labels font
 for label in (ax.get_xticklabels() + ax.get_yticklabels()):
@@ -103,7 +103,7 @@ for index, item in enumerate(patches):
 
 plt.xlabel('Position (nm)', fontsize = label_fontsize)
 plt.ylabel('Quantity', fontsize = label_fontsize)
-plt.title('Title', fontsize = title_fontsize)
+# plt.title('Title', fontsize = title_fontsize)
 
 # Set the tick labels font
 for label in (ax.get_xticklabels() + ax.get_yticklabels()):
@@ -137,7 +137,7 @@ for index, (line, width) in enumerate( zip(line_position_all, line_width_all) ):
 
 plt.xlabel('Position (nm)', fontsize = label_fontsize)
 plt.ylabel('Width (nm)', fontsize = label_fontsize)
-plt.title('Title', fontsize = title_fontsize)
+# plt.title('Title', fontsize = title_fontsize)
 # Set the tick labels font
 for label in (ax.get_xticklabels() + ax.get_yticklabels()):
     label.set_fontname('Arial')
