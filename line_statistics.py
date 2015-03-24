@@ -52,12 +52,12 @@ for in_file in in_files:
 
 
 
-
+# make the histogram of the line width data
 
 ax = plt.subplot()# Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font 
 
-# the histogram of the line width data
-n, bins, patches = plt.hist(line_width_all, bins = 15, histtype='stepfilled', stacked=True, label=legend_entries)
+binwidth = 1 #nm
+n, bins, patches = plt.hist(line_width_all, bins = np.arange(0, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
 # prepare colors for histogram bars
 coloring = plt.get_cmap(color_scale, len(patches))
@@ -82,6 +82,9 @@ plt.grid(True)
 plt.savefig( (out_filename +'_width.png'))
 plt.savefig( (out_filename +'_width.pdf'))
 
+print '--> saved figure ' + out_filename +'_width.png'
+print '--> saved figure ' + out_filename +'_width.pdf'
+
 plt.show()
 
 
@@ -92,7 +95,8 @@ plt.show()
 
 ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-n, bins, patches = plt.hist(line_position_all, bins = 15, histtype='stepfilled', stacked=True, label=legend_entries)
+binwidth = 5 #nm
+n, bins, patches = plt.hist(line_position_all, bins = np.arange(710, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
 # prepare colors for histogram bars
 coloring = plt.get_cmap(color_scale, len(patches))
@@ -116,6 +120,9 @@ plt.grid(True)
 
 plt.savefig( (out_filename +'_position.png'))
 plt.savefig( (out_filename +'_position.pdf'))
+
+print '--> saved figure ' + out_filename +'_position.png'
+print '--> saved figure ' + out_filename +'_position.pdf'
 
 plt.show()
 
@@ -144,10 +151,13 @@ for label in (ax.get_xticklabels() + ax.get_yticklabels()):
     label.set_fontsize(tick_fontsize)
 
 plt.tight_layout()
-legend = plt.legend(plot_list, legend_entries, prop={'size':legend_fontsize})
+legend = plt.legend(reversed(plot_list), reversed(legend_entries), prop={'size':legend_fontsize})
 plt.grid(True)
 
 plt.savefig( (out_filename +'_width_position.png'))
 plt.savefig( (out_filename +'_width_position.pdf'))
+
+print '--> saved figure ' + out_filename +'_width_position.png'
+print '--> saved figure ' + out_filename +'_width_position.pdf'
 
 plt.show()
