@@ -11,6 +11,7 @@
 from sys import argv
 import numpy as np
 from matplotlib import pyplot as plt
+import pickle # save plots in pickle format which can be opened in interactive window
 
 # define appearance
 color_scale = 'CMRmap'
@@ -81,6 +82,7 @@ plt.grid(True)
 
 plt.savefig( (out_filename +'_width.png'))
 plt.savefig( (out_filename +'_width.pdf'))
+pickle.dump(ax, file( (out_filename +'_width.pickle'), 'w'))
 
 print '--> saved figure ' + out_filename +'_width.png'
 print '--> saved figure ' + out_filename +'_width.pdf'
@@ -120,6 +122,7 @@ plt.grid(True)
 
 plt.savefig( (out_filename +'_position.png'))
 plt.savefig( (out_filename +'_position.pdf'))
+pickle.dump(ax, file( (out_filename +'_position.pickle'), 'w'))
 
 print '--> saved figure ' + out_filename +'_position.png'
 print '--> saved figure ' + out_filename +'_position.pdf'
@@ -156,6 +159,7 @@ plt.grid(True)
 
 plt.savefig( (out_filename +'_width_position.png'))
 plt.savefig( (out_filename +'_width_position.pdf'))
+pickle.dump(ax, file( (out_filename +'_width_position.pickle'), 'w'))
 
 print '--> saved figure ' + out_filename +'_width_position.png'
 print '--> saved figure ' + out_filename +'_width_position.pdf'
