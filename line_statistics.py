@@ -61,7 +61,7 @@ binwidth = 1 #nm
 n, bins, patches = plt.hist(line_width_all, bins = np.arange(0, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
 # prepare colors for histogram bars
-coloring = plt.get_cmap(color_scale, len(patches))
+coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
 # apply color
 for index, item in enumerate(patches):
     for patch in item:
@@ -101,7 +101,7 @@ binwidth = 5 #nm
 n, bins, patches = plt.hist(line_position_all, bins = np.arange(710, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
 # prepare colors for histogram bars
-coloring = plt.get_cmap(color_scale, len(patches))
+coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
 # apply color
 for index, item in enumerate(patches):
     for patch in item:
@@ -136,7 +136,7 @@ plt.show()
 ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
 # prepare colors for markers
-coloring = plt.get_cmap(color_scale, len(line_position_all))
+coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid white as color
 
 plot_list = []
 # plot
