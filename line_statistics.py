@@ -141,7 +141,7 @@ coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid whit
 plot_list = []
 # plot
 for index, (line, width) in enumerate( zip(line_position_all, line_width_all) ):
-    plot = plt.scatter(line, width, color='k', lw=1, s=20, marker='o', facecolor=coloring(index))
+    plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index))
     plot_list.append(plot)
 
 
