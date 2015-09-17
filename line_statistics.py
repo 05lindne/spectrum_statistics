@@ -46,7 +46,7 @@ legend_entries = []
 
 
 #read in data
-for in_file in in_files:
+for in_file in in_files, g2_file:
     print('--> reading file ' + in_file) #print out the filename we are currently processing
 
     line_position, line_width = np.loadtxt( in_file, delimiter="\t", usecols=(0, 1), unpack=True)
