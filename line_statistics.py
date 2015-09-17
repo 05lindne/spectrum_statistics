@@ -19,10 +19,23 @@ tick_fontsize = 23
 label_fontsize = 23
 title_fontsize = 23
 
-
+g2_flag = 0
 # argv is your commandline arguments, argv[0] is your program name, so skip it
 out_filename = argv[1]
-in_files = argv[2:]
+g2_file = 0
+
+if len(argv) < 2:
+    print "Usage: <out_filename> <in_filename1> <in_filename2> <in_filename...> (optional:) <g2> <g2_file>"
+
+if "g2" in argv:
+    print "indicating g2 spots in scatter plot"
+    g2_flag = 1
+    g2_listposition = argv.index('g2')
+    in_files = argv[2:g2_listposition]
+    g2_file = argv[g2_listposition+1:]
+else:
+    in_files = argv[2:]
+
 
 line_position_all = []
 line_width_all = []
@@ -95,8 +108,8 @@ plt.show()
 
 ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-binwidth = 5 #nm
-n, bins, patches = plt.hist(line_position_all, bins = np.arange(710, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+binwidth = 1 #nm
+n, bins, patches = plt.hist(line_position_all, bins = np.arange(0, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
 # prepare colors for histogram bars
 coloring = plt.get_cmap(color_scale, len(patches))
