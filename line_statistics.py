@@ -2,7 +2,7 @@
 
 """ File: line_statistics.py
 	Author: Sarah Lindner
-	Date of last change: 03.03.2015
+	Date of last change: 18.09.2015
 
 	
 """
