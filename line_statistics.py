@@ -12,6 +12,7 @@ from sys import argv
 import numpy as np
 from matplotlib import pyplot as plt
 import pickle # save plots in pickle format which can be opened in interactive window
+import argparse
 
 # define appearance
 color_scale = 'CMRmap'
@@ -21,12 +22,22 @@ label_fontsize = 23
 title_fontsize = 23
 
 
-# argv is your commandline arguments, argv[0] is your program name, so skip it
-out_filename = argv[1]
-in_files = argv[2:]
+parser = argparse.ArgumentParser()
+parser.add_argument('out_filename', help = 'name for output files; without extension')
+parser.add_argument('in_files', nargs = '*', help = 'input filenames')
+parser.add_argument("-g2", action = "store_true", help = "indicate g2 data") 
+
+
+args = parser.parse_args() 
+
+if args.g2: 
+    print 'data having g2 dip will be indicated in plot'
+
+
 
 line_position_all = []
 line_width_all = []
+g2_exist_all = []
 
 legend_entries = []
 
@@ -34,13 +45,14 @@ legend_entries = []
 
 
 #read in data
-for in_file in in_files:
+for in_file in args.in_files:
     print('--> reading file ' + in_file) #print out the filename we are currently processing
 
-    line_position, line_width = np.loadtxt( in_file, delimiter="\t", usecols=(0, 1), unpack=True)
+    line_position, line_width, g2_exist  = np.loadtxt( in_file, delimiter="\t", usecols=(0, 1, 2), unpack=True)
 
     line_position_all.append(line_position)
     line_width_all.append(line_width)
+    g2_exist_all.append(g2_exist)
 
     # prepare legend entries from file name
     file_parts = in_file.split('/')
@@ -80,12 +92,12 @@ plt.tight_layout()
 plt.legend(prop={'size':legend_fontsize})
 plt.grid(True)
 
-plt.savefig( (out_filename +'_width.png'))
-plt.savefig( (out_filename +'_width.pdf'))
-pickle.dump(ax, file( (out_filename +'_width.pickle'), 'w'))
+plt.savefig( (args.out_filename +'_width.png'))
+plt.savefig( (args.out_filename +'_width.pdf'))
+pickle.dump(ax, file( (args.out_filename +'_width.pickle'), 'w'))
 
-print '--> saved figure ' + out_filename +'_width.png'
-print '--> saved figure ' + out_filename +'_width.pdf'
+print '--> saved figure ' + args.out_filename +'_width.png'
+print '--> saved figure ' + args.out_filename +'_width.pdf'
 
 plt.show()
 
@@ -120,12 +132,12 @@ plt.tight_layout()
 legend = plt.legend(prop={'size':legend_fontsize})
 plt.grid(True)
 
-plt.savefig( (out_filename +'_position.png'))
-plt.savefig( (out_filename +'_position.pdf'))
-pickle.dump(ax, file( (out_filename +'_position.pickle'), 'w'))
+plt.savefig( (args.out_filename +'_position.png'))
+plt.savefig( (args.out_filename +'_position.pdf'))
+pickle.dump(ax, file( (args.out_filename +'_position.pickle'), 'w'))
 
-print '--> saved figure ' + out_filename +'_position.png'
-print '--> saved figure ' + out_filename +'_position.pdf'
+print '--> saved figure ' + args.out_filename +'_position.png'
+print '--> saved figure ' + args.out_filename +'_position.pdf'
 
 plt.show()
 
@@ -140,10 +152,15 @@ coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid whit
 
 plot_list = []
 # plot
-for index, (line, width) in enumerate( zip(line_position_all, line_width_all) ):
-    plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index))
+for index, (line, width, g2_exist) in enumerate( zip(line_position_all, line_width_all, g2_exist_all) ):
+    plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index), label = legend_entries[index])
     plot_list.append(plot)
 
+    line_position_g2 = [p for p,g in zip(line, g2_exist) if g == 1]
+    line_width_g2 = [w for w,g in zip(width, g2_exist) if g == 1]
+
+    plot = plt.scatter(line_position_g2, line_width_g2, color='k', lw=1, s=20, marker='o', facecolor="r", label = 'g2')
+    plot_list.append(plot)
 
 plt.xlabel('Position (nm)', fontsize = label_fontsize)
 plt.ylabel('Width (nm)', fontsize = label_fontsize)
@@ -154,14 +171,14 @@ for label in (ax.get_xticklabels() + ax.get_yticklabels()):
     label.set_fontsize(tick_fontsize)
 
 plt.tight_layout()
-legend = plt.legend(reversed(plot_list), reversed(legend_entries), prop={'size':legend_fontsize})
+legend = plt.legend(prop={'size':legend_fontsize})
 plt.grid(True)
 
-plt.savefig( (out_filename +'_width_position.png'))
-plt.savefig( (out_filename +'_width_position.pdf'))
-pickle.dump(ax, file( (out_filename +'_width_position.pickle'), 'w'))
+plt.savefig( (args.out_filename +'_width_position.png'))
+plt.savefig( (args.out_filename +'_width_position.pdf'))
+pickle.dump(ax, file( (args.out_filename +'_width_position.pickle'), 'w'))
 
-print '--> saved figure ' + out_filename +'_width_position.png'
-print '--> saved figure ' + out_filename +'_width_position.pdf'
+print '--> saved figure ' + args.out_filename +'_width_position.png'
+print '--> saved figure ' + args.out_filename +'_width_position.pdf'
 
 plt.show()
