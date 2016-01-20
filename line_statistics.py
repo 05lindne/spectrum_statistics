@@ -23,6 +23,7 @@ label_fontsize = 23
 title_fontsize = 23
 legend_entries = []
 
+# get arguments from command line
 parser = argparse.ArgumentParser()
 parser.add_argument('out_filename', help = 'name for output files; without extension')
 parser.add_argument('in_files', nargs = '*', help = 'input filenames')
@@ -32,7 +33,7 @@ parser.add_argument("-g2", action = "store_true", help = "indicate g2 data")
 args = parser.parse_args() 
 
 if args.g2: 
-    print 'data having g2 dip will be indicated in plot'
+    print 'data exhibiting g2 dip will be indicated in plot'
 
 
 def main():
@@ -76,7 +77,7 @@ def linewidth(line_width_all):
 
     ax = plt.subplot()# Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font 
 
-    binwidth = 1 #nm
+    binwidth = .5 #nm
     n, bins, patches = plt.hist(line_width_all, bins = np.arange(0, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
     # prepare colors for histogram bars
@@ -128,7 +129,7 @@ def zpl_postition(line_position_all):
         for patch in item:
             patch.set_facecolor(coloring(index))
 
-    plt.xlabel('Position (nm)', fontsize = label_fontsize)
+    plt.xlabel('ZPL Center (nm)', fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
     # plt.title('Title', fontsize = title_fontsize)
 
@@ -157,21 +158,23 @@ def width_position(line_width_all, line_position_all, g2_exist_all):
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
     # prepare colors for markers
-    coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid white as color
+    # coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid white as color
+    coloring = plt.get_cmap(color_scale, len(line_position_all)) #+1 to avoid white as color
 
     plot_list = []
     # plot
     for index, (line, width, g2_exist) in enumerate( zip(line_position_all, line_width_all, g2_exist_all) ):
-        plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index), label = legend_entries[index])
+        # plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index), label = legend_entries[index])
+        plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor='k', label = legend_entries[index])
         plot_list.append(plot)
 
         line_position_g2 = [p for p,g in zip(line, g2_exist) if g == 1]
         line_width_g2 = [w for w,g in zip(width, g2_exist) if g == 1]
 
-        plot = plt.scatter(line_position_g2, line_width_g2, edgecolor='g', lw=3, s=100, marker='o', facecolor = 'none')
+        plot = plt.scatter(line_position_g2, line_width_g2, edgecolor='r', lw=3, s=100, marker='o', facecolor = 'none')
         plot_list.append(plot)
 
-    plt.xlabel('Position (nm)', fontsize = label_fontsize)
+    plt.xlabel('ZPL Center (nm)', fontsize = label_fontsize)
     plt.ylabel('Width (nm)', fontsize = label_fontsize)
     # plt.title('Title', fontsize = title_fontsize)
     # Set the tick labels font
@@ -180,7 +183,8 @@ def width_position(line_width_all, line_position_all, g2_exist_all):
         label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
-    legend = plt.legend(prop={'size':legend_fontsize})
+    plt.ylim(0,plt.ylim()[1])
+    # legend = plt.legend(prop={'size':legend_fontsize})
     plt.grid(True)
 
     plt.savefig( (args.out_filename +'_width_position.png'))
