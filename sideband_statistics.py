@@ -173,7 +173,7 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
         plt.plot( position_all, predict_distance_all )
 
     # plot data
-    plt.plot( position_all, distance_all, 'k.' )
+    plt.plot( np.concatenate( position_all ), np.concatenate( distance_all ), 'k.' )
 
 
     plt.xlabel(x_axis , fontsize = label_fontsize)
