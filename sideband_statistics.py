@@ -72,7 +72,7 @@ def main():
         zpl_position_all.append( zpl_position )
         sideband_all.append( sideband )
         linewidth_all.append( linewidth )
-        distance_all.append( np.absolute( np.subtract( zpl_position, sideband ) ))
+        distance_all_nm.append( np.absolute( np.subtract( zpl_position, sideband ) ))
 
     zpl_ev = convert_wavelength_electronvolt(zpl_position_all)
     sideband_ev = convert_wavelength_electronvolt( sideband_all )
@@ -84,9 +84,9 @@ def main():
 
     sideband_histo(sideband_all,'Sidepeak Position (nm)','_sidepeak', binwidth = 1)
     sideband_histo(zpl_position_all,  'ZPL Position (nm)', '_zpl_position' , binwidth = 0.5)
-    sideband_histo(distance_all, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
-    sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl')
-    sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance')
+    sideband_histo(distance_all_nm, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
+    sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl', fit=False)
+    sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance', fit=False)
     sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=True)
     sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
     sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
