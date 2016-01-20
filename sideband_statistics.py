@@ -209,25 +209,16 @@ def sideband_scatter_colorbar(position_all, distance_all, linewidth_all, x_axis,
 
 
     fig = plt.figure()
-    # ax = fig.add_subplot(111,projection='3d')
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-    # ax.plot( position_all, distance_all, linewidth, 'k.' )
-    # ax.scatter( position_all, distance_all, linewidth_all, c=distance_all, s=40, norm=col.LogNorm() )
-    # plt.scatter( position_all, linewidth_all, c=distance_all, s=40 )
     plt.scatter( position_all, linewidth_all, c=distance_all, norm=col.LogNorm() )
 
     cbar = plt.colorbar()
     cbar.set_label('Sideband Distance (nm)', fontsize = label_fontsize, rotation = 90)
 
-    # plt.xlabel(x_axis , fontsize = label_fontsize)
-    # plt.ylabel(z_axis, fontsize = label_fontsize)
-    # ax.set_xlabel(x_axis)
-    # ax.set_ylabel(y_axis)
-    # ax.set_zlabel(z_axis)
-    # ax.w_xaxis.set_pane_color((0, 0, 0, 0))
-    # ax.w_yaxis.set_pane_color((0, 0, 0, 0))
-    # ax.w_zaxis.set_pane_color((0, 0, 0, 0))
+    plt.xlabel(x_axis , fontsize = label_fontsize)
+    plt.ylabel(z_axis, fontsize = label_fontsize)
+
 
     # Set the tick labels font
     for label in (cbar.ax.get_yticklabels() + ax.get_xticklabels() + ax.get_yticklabels()):
@@ -256,29 +247,15 @@ def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis
 
     fig = plt.figure()
     ax = fig.add_subplot(111,projection='3d')
-    # ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-    # ax.plot( position_all, distance_all, linewidth, 'k.' )
     ax.scatter( position_all, distance_all, linewidth_all, c=distance_all, s=40, norm=col.LogNorm() )
-    # plt.scatter( position_all, linewidth_all, c=distance_all, s=40 )
-    # plt.scatter( position_all, linewidth_all, c=distance_all, norm=col.LogNorm() )
 
-    # cbar = plt.colorbar()
-    # cbar.set_label('Sideband Distance (nm)', fontsize = label_fontsize, rotation = 90)
-
-    # plt.xlabel(x_axis , fontsize = label_fontsize)
-    # plt.ylabel(z_axis, fontsize = label_fontsize)
     ax.set_xlabel(x_axis)
     ax.set_ylabel(y_axis)
     ax.set_zlabel(z_axis)
     ax.w_xaxis.set_pane_color((0, 0, 0, 0))
     ax.w_yaxis.set_pane_color((0, 0, 0, 0))
     ax.w_zaxis.set_pane_color((0, 0, 0, 0))
-
-    # Set the tick labels font
-    # for label in (cbar.ax.get_yticklabels() + ax.get_xticklabels() + ax.get_yticklabels()):
-    #     label.set_fontname('Arial')
-    #     label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
     plt.grid(True)
