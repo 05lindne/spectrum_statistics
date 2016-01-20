@@ -64,10 +64,15 @@ def main():
         zpl_position, sideband = np.loadtxt( in_file, delimiter = "\t", usecols = (0, 1), unpack = True)
         zpl_position, sideband, linewidth = np.loadtxt( in_file, delimiter = "\t", usecols = (0, 1, 2), unpack = True)
 
-        zpl_position_all = np.concatenate( ( zpl_position_all, zpl_position ), axis = 0)
-        sideband_all = np.concatenate( ( sideband_all, sideband ), axis = 0)
-        linewidth_all = np.concatenate( ( linewidth_all, linewidth ), axis = 0)
-        distance_all_nm = np.concatenate( ( distance_all,np.absolute( np.subtract( zpl_position, sideband ) )), axis = 0)
+        # zpl_position_all = np.concatenate( ( zpl_position_all, zpl_position ), axis = 0)
+        # sideband_all = np.concatenate( ( sideband_all, sideband ), axis = 0)
+        # linewidth_all = np.concatenate( ( linewidth_all, linewidth ), axis = 0)
+        # distance_all_nm = np.concatenate( ( distance_all,np.absolute( np.subtract( zpl_position, sideband ) )), axis = 0)
+
+        zpl_position_all.append( zpl_position )
+        sideband_all.append( sideband )
+        linewidth_all.append( linewidth )
+        distance_all.append( np.absolute( np.subtract( zpl_position, sideband ) ))
 
     zpl_ev = convert_wavelength_electronvolt(zpl_position_all)
     sideband_ev = convert_wavelength_electronvolt( sideband_all )
@@ -99,18 +104,20 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
     print position_all
-    n, bins, patches = plt.hist(position_all, bins = np.arange((min(position_all) - binwidth), (max(position_all) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
-    # n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    # n, bins, patches = plt.hist(position_all, bins = np.arange((min(position_all) - binwidth), (max(position_all) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    print patches
+
 
     # prepare colors for histogram bars
     coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
-    # apply color
-    for index, item in enumerate(patches):
-        item.set_facecolor(coloring(index))
     # # apply color
     # for index, item in enumerate(patches):
-    #     for patch in item:
-    #         patch.set_facecolor(coloring(index))
+    #     item.set_facecolor(coloring(index))
+    # apply color
+    for index, item in enumerate(patches):
+        for patch in item:
+            patch.set_facecolor(coloring(index))
 
     plt.xlabel(x_axis, fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
