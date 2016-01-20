@@ -18,7 +18,7 @@ from matplotlib import colors as col
 from mpl_toolkits.mplot3d import Axes3D
 from scipy import constants as const
 from scipy import stats # linear regression
-import matplotlib.cm as cm
+# import matplotlib.cm as cm
 import pickle # save plots in pickle format which can be opened in interactive window
 import argparse
 
@@ -77,15 +77,15 @@ def main():
         distance_all.append(np.absolute( np.subtract(zpl, sideband) ))
 
 
-    # sideband_histo(sideband_all,'Sidepeak Position (nm)','_sidepeak', binwidth = 1)
-    # sideband_histo(zpl_position_all,  'ZPL Position (nm)', '_zpl_position' , binwidth = 0.5)
-    # sideband_histo(distance_all, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
-    # sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl')
-    # sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance')
+    sideband_histo(sideband_all,'Sidepeak Position (nm)','_sidepeak', binwidth = 1)
+    sideband_histo(zpl_position_all,  'ZPL Position (nm)', '_zpl_position' , binwidth = 0.5)
+    sideband_histo(distance_all, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
+    sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl')
+    sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance')
     sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=True)
-    # sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
-    # sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
-    # sideband_scatter3d(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth')
+    sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
+    sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
+    sideband_scatter3d(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth')
     # print np.median(sideband_all)
     # print np.median(zpl_position_all)
     # print np.median(distance_all)
@@ -98,14 +98,19 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
 
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-    n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    print position_all
+    n, bins, patches = plt.hist(position_all, bins = np.arange((min(position_all) - binwidth), (max(position_all) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    # n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
 
     # prepare colors for histogram bars
     coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
     # apply color
     for index, item in enumerate(patches):
-        for patch in item:
-            patch.set_facecolor(coloring(index))
+        item.set_facecolor(coloring(index))
+    # # apply color
+    # for index, item in enumerate(patches):
+    #     for patch in item:
+    #         patch.set_facecolor(coloring(index))
 
     plt.xlabel(x_axis, fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
@@ -145,24 +150,23 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
     # prepare colors for markers
     coloring = plt.get_cmap(color_scale, len(distance_all)+1) #+1 to avoid white as color
 
-    # plot_list = []
-    # plot
-    # for index, (line, width) in enumerate( zip(position_all, distance_all) ):
-        # plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker=markers[index], facecolor=coloring(index))
-        # plot_list.append(plot)
-
-    if fit == True:
+    # fit data
+    if fit:
+        # prepare file for storing fit parameters
         param_file = open(args.out_filename + '_params.txt', 'w')
         param_file.write("slope\tintercept\tr_value\tp_value\tslope_std_error\n")
+        # fit linear regression
         slope, intercept, r_value, p_value, slope_std_error = stats.linregress( position_all, distance_all )
+        # write fit parameters into file
         param_file.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format( slope, intercept, r_value, p_value, slope_std_error))
         param_file.close()
+        # construct linear regression line
         predict_distance_all = intercept + slope * position_all
+        # plot line
         plt.plot( position_all, predict_distance_all )
 
+    # plot data
     plt.plot( position_all, distance_all, 'k.' )
-    # (position_all_fit, distance_all_fit) = polyfit(position_all, distance_all, 1)
-    # fit_function = polyval( [position_all_fit, distance_all_fit], position_all )
 
 
     plt.xlabel(x_axis , fontsize = label_fontsize)
@@ -174,8 +178,7 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
         label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
-    # legend = plt.legend(reversed(plot_list), reversed(legend_entries), prop={'size':legend_fontsize})
-    # legend = plt.legend(plot_list, legend_entries, prop={'size':legend_fontsize}, loc = 4)
+
     plt.grid(True)
 
     plt.savefig( (args.out_filename + filename +'.png'))
@@ -186,8 +189,7 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
     print '--> saved figure(s) ' + args.out_filename + filename
 
     plt.show()
-# def path_filename( file ):
-#    return os.path.dirname( os.path.realpath( file ) ) + "/" + os.path.basename( file )
+
 
 
 def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis, z_axis, filename):
