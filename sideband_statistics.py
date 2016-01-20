@@ -103,10 +103,9 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
 
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-    print position_all
     # n, bins, patches = plt.hist(position_all, bins = np.arange((min(position_all) - binwidth), (max(position_all) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
-    n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
-    print patches
+    n, bins, patches = plt.hist(position_all, bins = np.arange((min(np.concatenate(position_all)) - binwidth), (max(np.concatenate(position_all)) + binwidth), binwidth), histtype='stepfilled', facecolor='k', stacked=True, label=legend_entries)
+
 
 
     # prepare colors for histogram bars
@@ -114,10 +113,12 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
     # # apply color
     # for index, item in enumerate(patches):
     #     item.set_facecolor(coloring(index))
+    print patches
     # apply color
-    for index, item in enumerate(patches):
-        for patch in item:
-            patch.set_facecolor(coloring(index))
+    if len(patches) > 1:
+        for index, item in enumerate(patches):
+            for patch in item:
+                patch.set_facecolor(coloring(index))
 
     plt.xlabel(x_axis, fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
@@ -163,14 +164,18 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
         param_file = open(args.out_filename + '_params.txt', 'w')
         param_file.write("slope\tintercept\tr_value\tp_value\tslope_std_error\n")
         # fit linear regression
-        slope, intercept, r_value, p_value, slope_std_error = stats.linregress( position_all, distance_all )
+        slope, intercept, r_value, p_value, slope_std_error = stats.linregress( np.concatenate( position_all ), np.concatenate( distance_all ) )
         # write fit parameters into file
         param_file.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format( slope, intercept, r_value, p_value, slope_std_error))
         param_file.close()
         # construct linear regression line
-        predict_distance_all = intercept + slope * position_all
+        predict_distance_all = intercept + slope *  np.concatenate( position_all )
         # plot line
-        plt.plot( position_all, predict_distance_all )
+        print "np.concatenate( position_all ):\n"
+        print np.concatenate( position_all )
+        print "predict_distance_all:\n"
+        print predict_distance_all
+        plt.plot( np.concatenate( position_all ), predict_distance_all )
 
     # plot data
     plt.plot( np.concatenate( position_all ), np.concatenate( distance_all ), 'k.' )
