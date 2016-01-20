@@ -90,6 +90,7 @@ def main():
     sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=True)
     sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
     sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
+    sideband_scatter_colorbar(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth')
     sideband_scatter3d(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth')
     # print np.median(sideband_all)
     # print np.median(zpl_position_all)
@@ -171,10 +172,6 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
         # construct linear regression line
         predict_distance_all = intercept + slope *  np.concatenate( position_all )
         # plot line
-        print "np.concatenate( position_all ):\n"
-        print np.concatenate( position_all )
-        print "predict_distance_all:\n"
-        print predict_distance_all
         plt.plot( np.concatenate( position_all ), predict_distance_all )
 
     # plot data
@@ -202,6 +199,52 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
 
     plt.show()
 
+
+
+def sideband_scatter_colorbar(position_all, distance_all, linewidth_all, x_axis, y_axis, z_axis, filename):
+
+    position_all = np.concatenate( position_all )
+    distance_all = np.concatenate( distance_all )
+    linewidth_all = np.concatenate( linewidth_all )
+
+
+    fig = plt.figure()
+    # ax = fig.add_subplot(111,projection='3d')
+    ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
+
+    # ax.plot( position_all, distance_all, linewidth, 'k.' )
+    # ax.scatter( position_all, distance_all, linewidth_all, c=distance_all, s=40, norm=col.LogNorm() )
+    # plt.scatter( position_all, linewidth_all, c=distance_all, s=40 )
+    plt.scatter( position_all, linewidth_all, c=distance_all, norm=col.LogNorm() )
+
+    cbar = plt.colorbar()
+    cbar.set_label('Sideband Distance (nm)', fontsize = label_fontsize, rotation = 90)
+
+    # plt.xlabel(x_axis , fontsize = label_fontsize)
+    # plt.ylabel(z_axis, fontsize = label_fontsize)
+    # ax.set_xlabel(x_axis)
+    # ax.set_ylabel(y_axis)
+    # ax.set_zlabel(z_axis)
+    # ax.w_xaxis.set_pane_color((0, 0, 0, 0))
+    # ax.w_yaxis.set_pane_color((0, 0, 0, 0))
+    # ax.w_zaxis.set_pane_color((0, 0, 0, 0))
+
+    # Set the tick labels font
+    for label in (cbar.ax.get_yticklabels() + ax.get_xticklabels() + ax.get_yticklabels()):
+        label.set_fontname('Arial')
+        label.set_fontsize(tick_fontsize)
+
+    plt.tight_layout()
+    plt.grid(True)
+
+    plt.savefig( (args.out_filename + filename +'.png'))
+    plt.savefig( (args.out_filename + filename +'.pdf'))
+    plt.savefig( (args.out_filename + filename +'.svg'))
+    pickle.dump(ax, file( (args.out_filename + filename +'.pickle'), 'w'))
+
+    print '--> saved figure(s) ' + args.out_filename + filename
+
+    plt.show()
 
 
 def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis, z_axis, filename):
@@ -234,12 +277,10 @@ def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis
 
     # Set the tick labels font
     # for label in (cbar.ax.get_yticklabels() + ax.get_xticklabels() + ax.get_yticklabels()):
-        # label.set_fontname('Arial')
-        # label.set_fontsize(tick_fontsize)
+    #     label.set_fontname('Arial')
+    #     label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
-    # legend = plt.legend(reversed(plot_list), reversed(legend_entries), prop={'size':legend_fontsize})
-    # legend = plt.legend(plot_list, legend_entries, prop={'size':legend_fontsize}, loc = 4)
     plt.grid(True)
 
     plt.savefig( (args.out_filename + filename +'.png'))
