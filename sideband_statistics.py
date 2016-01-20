@@ -113,7 +113,7 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
     # # apply color
     # for index, item in enumerate(patches):
     #     item.set_facecolor(coloring(index))
-    print patches
+
     # apply color
     if len(patches) > 1:
         for index, item in enumerate(patches):
@@ -205,6 +205,11 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
 
 
 def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis, z_axis, filename):
+
+    position_all = np.concatenate( position_all )
+    distance_all = np.concatenate( distance_all )
+    linewidth_all = np.concatenate( linewidth_all )
+
 
     fig = plt.figure()
     ax = fig.add_subplot(111,projection='3d')
