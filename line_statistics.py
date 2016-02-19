@@ -181,16 +181,26 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
         line_width_fit = []
         line_position_fit = []
 
-        line_width_temp = []
-        line_position_temp = []
+        line_width_temp1 = []
+        line_position_temp1 = []
+        line_width_temp2 = []
+        line_position_temp2 = []
 
         for index,( item1, item2 ) in enumerate( zip( np.concatenate(line_width_all), np.concatenate(line_position_all) ) ):
             if item1 >= 5:
                 # print line_width_all 
                 # print "\n\n"
                 # print np.concatenate(line_width_all)
-                line_width_temp.append( np.concatenate(line_width_all )[index] )
-                line_position_temp.append( np.concatenate(line_position_all )[index] )
+                line_width_temp1.append( np.concatenate(line_width_all )[index] )
+                line_position_temp1.append( np.concatenate(line_position_all )[index] )
+
+        for index,( item1, item2 ) in enumerate( zip( line_width_temp1, line_position_temp1 ) ):
+            if item2 >= 738:
+                # print line_width_all 
+                # print "\n\n"
+                # print np.concatenate(line_width_all)
+                line_width_temp2.append( line_width_temp1[index] )
+                line_position_temp2.append( line_position_temp1[index] )
 
         # line_width_fit = np.array(filter(lambda x: x >= 5, np.concatenate(line_width_all) ) )
 
@@ -202,8 +212,8 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
         # print "\n\n\n"
         # print len(line_position_fit)
 
-        line_width_fit = np.array(line_width_temp)
-        line_position_fit = np.array(line_position_temp)
+        line_width_fit = np.array(line_width_temp2)
+        line_position_fit = np.array(line_position_temp2)
 
         # prepare file for storing fit parameters
         param_file = open(args.out_filename + '_params.txt', 'w')
