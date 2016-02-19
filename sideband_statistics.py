@@ -81,7 +81,7 @@ def main():
     sideband_histo(distance_all_nm, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
     sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl', fit=False)
     sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance', fit=False)
-    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=True)
+    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=False)
     sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
     sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
     sideband_scatter_colorbar(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth3d')
@@ -130,7 +130,7 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
     plt.savefig( (args.out_filename + filename +'.svg'))
     pickle.dump(ax, file( (args.out_filename + filename +'.pickle'), 'w'))
 
-    print '--> saved figure(s) ' + args.out_filename + filename
+    print '--> saved wonderful histogram ' + args.out_filename + filename
 
 
     plt.show()
@@ -144,26 +144,27 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
     # prepare colors for markers
     coloring = plt.get_cmap(color_scale, len(distance_all)+1) #+1 to avoid white as color
 
-    position_all = np.concatenate( position_all )
-    distance_all = np.concatenate( distance_all )
-
     # fit data
     if fit:
         # prepare file for storing fit parameters
         param_file = open(args.out_filename + '_params.txt', 'w')
         param_file.write("slope\tintercept\tr_value\tp_value\tslope_std_error\n")
         # fit linear regression
-        slope, intercept, r_value, p_value, slope_std_error = stats.linregress(  position_all ,  distance_all )
+        slope, intercept, r_value, p_value, slope_std_error = stats.linregress(  np.concatenate( position_all ) ,  np.concatenate( distance_all ) )
         # write fit parameters into file
         param_file.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format( slope, intercept, r_value, p_value, slope_std_error))
         param_file.close()
         # construct linear regression line
-        predict_distance_all = intercept + slope * position_all
+        predict_distance_all = intercept + slope * np.concatenate( position_all )
         # plot line
-        plt.plot( position_all , predict_distance_all )
+        plt.plot( np.concatenate( position_all ) , predict_distance_all )
 
     # plot data
-    plt.plot(  position_all,  distance_all , 'k.' )
+    for index, ( itemx, itemy ) in enumerate( zip( position_all, distance_all ) ):
+        # plt.plot(itemx, itemy, color=coloring(index) )
+        plt.plot(itemx, itemy, 'o', color=coloring(index) )
+
+    # plt.plot(  position_all,  distance_all , 'k.' )
 
 
     plt.xlabel(x_axis , fontsize = label_fontsize)
@@ -183,7 +184,7 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
     plt.savefig( (args.out_filename + filename +'.svg'))
     pickle.dump(ax, file( (args.out_filename + filename +'.pickle'), 'w'))
 
-    print '--> saved figure(s) ' + args.out_filename + filename
+    print '--> saved cool scatter plot ' + args.out_filename + filename
 
     plt.show()
 
@@ -221,7 +222,7 @@ def sideband_scatter_colorbar(position_all, distance_all, linewidth_all, x_axis,
     plt.savefig( (args.out_filename + filename +'.svg'))
     pickle.dump(ax, file( (args.out_filename + filename +'.pickle'), 'w'))
 
-    print '--> saved figure(s) ' + args.out_filename + filename
+    print '--> saved awesome colorful scatter plot ' + args.out_filename + filename
 
     plt.show()
 
@@ -253,7 +254,7 @@ def sideband_scatter3d(position_all, distance_all, linewidth_all, x_axis, y_axis
     plt.savefig( (args.out_filename + filename +'.svg'))
     pickle.dump(ax, file( (args.out_filename + filename +'.pickle'), 'w'))
 
-    print '--> saved figure(s) ' + args.out_filename + filename
+    print '--> saved freaky colorful 3D  scatter plot ' + args.out_filename + filename
 
     plt.show()
 
@@ -269,3 +270,4 @@ def convert_wavelength_electronvolt( wavelength ):
 
 if __name__ == '__main__':
     main()
+    print "I enjoyed creating plots for you :)"

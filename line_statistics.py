@@ -14,6 +14,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pickle # save plots in pickle format which can be opened in interactive window
 import argparse
+from scipy import stats # linear regression
 
 # define appearance
 color_scale = 'CMRmap'
@@ -67,9 +68,9 @@ def main():
 
         legend_entries.append(legend_entry)
 
-    linewidth(line_width_all)
-    zpl_postition(line_position_all )
-    width_position(line_width_all, line_position_all, g2_exist_all)
+    # linewidth(line_width_all)
+    # zpl_postition(line_position_all )
+    width_position(line_width_all, line_position_all, g2_exist_all, fit=True)
 
 
 def linewidth(line_width_all):
@@ -153,7 +154,7 @@ def zpl_postition(line_position_all):
 
 
 
-def width_position(line_width_all, line_position_all, g2_exist_all):
+def width_position(line_width_all, line_position_all, g2_exist_all, fit):
 
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
@@ -173,6 +174,50 @@ def width_position(line_width_all, line_position_all, g2_exist_all):
 
         plot = plt.scatter(line_position_g2, line_width_g2, edgecolor='r', lw=3, s=100, marker='o', facecolor = 'none')
         plot_list.append(plot)
+
+
+    # fit data
+    if fit:
+        line_width_fit = []
+        line_position_fit = []
+
+        line_width_temp = []
+        line_position_temp = []
+
+        for index,( item1, item2 ) in enumerate( zip( np.concatenate(line_width_all), np.concatenate(line_position_all) ) ):
+            if item1 >= 5:
+                # print line_width_all 
+                # print "\n\n"
+                # print np.concatenate(line_width_all)
+                line_width_temp.append( np.concatenate(line_width_all )[index] )
+                line_position_temp.append( np.concatenate(line_position_all )[index] )
+
+        # line_width_fit = np.array(filter(lambda x: x >= 5, np.concatenate(line_width_all) ) )
+
+        # print line_width_fit
+        # print"\n\n\n"
+        # print line_position_fit
+        # print "\n\n\n"
+        # print len(line_width_fit)
+        # print "\n\n\n"
+        # print len(line_position_fit)
+
+        line_width_fit = np.array(line_width_temp)
+        line_position_fit = np.array(line_position_temp)
+
+        # prepare file for storing fit parameters
+        param_file = open(args.out_filename + '_params.txt', 'w')
+        param_file.write("slope\tintercept\tr_value\tp_value\tslope_std_error\n")
+        # fit linear regression
+        slope, intercept, r_value, p_value, slope_std_error = stats.linregress( line_position_fit, line_width_fit )
+        # write fit parameters into file
+        param_file.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format( slope, intercept, r_value, p_value, slope_std_error))
+        param_file.close()
+        # construct linear regression line
+        predict_line_position_all = intercept + slope * line_position_fit 
+        # plot line
+        plt.plot( line_position_fit , predict_line_position_all )
+
 
     plt.xlabel('ZPL Center (nm)', fontsize = label_fontsize)
     plt.ylabel('Width (nm)', fontsize = label_fontsize)
