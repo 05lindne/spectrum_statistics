@@ -76,16 +76,16 @@ def main():
         distance_all.append(np.absolute( np.subtract(zpl, sideband) ))
 
 
-    sideband_histo(sideband_all,'Sidepeak Position (nm)','_sidepeak', binwidth = 1)
-    sideband_histo(zpl_position_all,  'ZPL Position (nm)', '_zpl_position' , binwidth = 0.5)
-    sideband_histo(distance_all_nm, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
-    sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl', fit=False)
-    sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance', fit=False)
-    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=False)
-    sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
-    sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
-    sideband_scatter_colorbar(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth3d')
-    sideband_scatter3d(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth_colorbar')
+    # sideband_histo(sideband_all,'Sidepeak Position (nm)','_sidepeak', binwidth = 1)
+    # sideband_histo(zpl_position_all,  'ZPL Position (nm)', '_zpl_position' , binwidth = 0.5)
+    # sideband_histo(distance_all_nm, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
+    # sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl', fit=False)
+    # sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance', fit=False)
+    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=False, band_position_line = True)
+    # sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
+    # sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
+    # sideband_scatter_colorbar(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth3d')
+    # sideband_scatter3d(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth_colorbar')
 
     
 
@@ -137,7 +137,7 @@ def sideband_histo(position_all, x_axis, filename, binwidth=1):
 
 
 
-def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
+def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit, band_position_line):
 
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
@@ -159,6 +159,8 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
         # plot line
         plt.plot( np.concatenate( position_all ) , predict_distance_all )
 
+        
+
     # plot data
     for index, ( itemx, itemy ) in enumerate( zip( position_all, distance_all ) ):
         # plt.plot(itemx, itemy, color=coloring(index) )
@@ -166,6 +168,11 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit):
 
     # plt.plot(  position_all,  distance_all , 'k.' )
 
+    if band_position_line:
+        plt.axhline(y=43, linewidth=2, color = 'g')
+        plt.axhspan((43-2.5), (43+2.5), facecolor='g', alpha=0.25)
+        plt.axhline(y=64, linewidth=2, color = 'g')
+        plt.axhspan((64-2.5), (64+2.5), facecolor='g', alpha=0.25)
 
     plt.xlabel(x_axis , fontsize = label_fontsize)
     plt.ylabel(y_axis, fontsize = label_fontsize)
