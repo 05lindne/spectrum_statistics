@@ -81,7 +81,7 @@ def main():
     # sideband_histo(distance_all_nm, 'Distance ZPL - Sideband (meV)', '_distance', binwidth = 2)
     # sideband_scatter(zpl_position_all, sideband_all, 'ZPL Position (nm)', 'Sidepeak Position (nm)','_sideband_vs_zpl', fit=False)
     # sideband_scatter(sideband_all, distance_all, 'Sidepeak Position (nm)', 'Distance (meV)','_sideband_vs_distance', fit=False)
-    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=False, band_position_line = True)
+    sideband_scatter(zpl_position_all, distance_all, 'ZPL Position (nm)', 'Distance (meV)', '_zpl_vs_distance', fit=False, band_position_line = False)
     # sideband_scatter(linewidth_all, distance_all, 'Linewidth (nm)', 'Distance (meV)', '_linewidth_vs_distance', fit=False)
     # sideband_scatter(linewidth_all, sideband_all, 'Linewidth (nm)', 'Sidepeak Position (nm)', '_linewidth_vs_sideband', fit=False)
     # sideband_scatter_colorbar(zpl_position_all, distance_all, linewidth_all, 'ZPL Position (nm)', 'Distance (meV)', 'Linewidth (nm)', '_zpl_vs_distance_vs_linewidth3d')
@@ -164,7 +164,7 @@ def sideband_scatter(position_all, distance_all, x_axis, y_axis, filename, fit, 
     # plot data
     for index, ( itemx, itemy ) in enumerate( zip( position_all, distance_all ) ):
         # plt.plot(itemx, itemy, color=coloring(index) )
-        plt.plot(itemx, itemy, 'o', color=coloring(index) )
+        plt.plot(itemx, itemy, 'o', markersize=7, color=coloring(index) )
 
     # plt.plot(  position_all,  distance_all , 'k.' )
 

@@ -2,7 +2,7 @@
 
 """ File: line_statistics.py
 	Author: Sarah Lindner
-	Date of last change: 18.09.2015
+	Date of last change: 04.04.2016
 
 	
 """
@@ -18,17 +18,20 @@ from scipy import stats # linear regression
 
 # define appearance
 color_scale = 'CMRmap'
+pattern = ['-', '+', 'x', '\\', '*', 'o', 'O', '.']
+# color_scale = 'viridis'
 legend_fontsize = 23
 tick_fontsize = 23
 label_fontsize = 23
 title_fontsize = 23
-legend_entries = []
+# legend_entries = ['xc1', 'xc2', 'xc3']
 
 # get arguments from command line
 parser = argparse.ArgumentParser()
 parser.add_argument('out_filename', help = 'name for output files; without extension')
 parser.add_argument('in_files', nargs = '*', help = 'input filenames')
 parser.add_argument("-g2", action = "store_true", help = "indicate g2 data") 
+parser.add_argument("-fit", action = "store_true", help = "fit slope of vertical lobe") 
 
 
 args = parser.parse_args() 
@@ -66,11 +69,11 @@ def main():
         last_part_split = last_part.split('.')
         legend_entry = last_part_split[len(last_part_split)-2] # take item before last dot
 
-        legend_entries.append(legend_entry)
+        # legend_entries.append(legend_entry)
 
-    # linewidth(line_width_all)
-    # zpl_postition(line_position_all )
-    width_position(line_width_all, line_position_all, g2_exist_all, fit=True)
+    linewidth(line_width_all)
+    zpl_postition(line_position_all )
+    # width_position(line_width_all, line_position_all, g2_exist_all, args.fit)
 
 
 def linewidth(line_width_all):
@@ -78,16 +81,25 @@ def linewidth(line_width_all):
 
     ax = plt.subplot()# Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font 
 
-    binwidth = .5 #nm
-    n, bins, patches = plt.hist(line_width_all, bins = np.arange(0, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    binwidth = 1 #nm
+    # n, bins, patches = plt.hist(line_width_all, bins = np.arange(0, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    n, bins, patches = plt.hist(line_width_all, bins = np.arange(1, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled',stacked=False, align='left')#, label=legend_entries)
+    # n, bins, patches = plt.hist(line_width_all, bins = np.arange(1, max(np.concatenate(line_width_all)) + binwidth, binwidth), histtype='stepfilled',stacked=False, align='left', label=legend_entries)
 
     # prepare colors for histogram bars
-    coloring = plt.get_cmap(color_scale, len(patches)) #+1 to avoid white as color
-    # coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
+    # coloring = plt.get_cmap(color_scale, len(patches)) #+1 to avoid white as color
+    coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
     # apply color
     for index, item in enumerate(patches):
         for patch in item:
-            patch.set_facecolor(coloring(index))
+            # patch.set_facecolor(coloring(index))
+            # patch.set_facecolor('none')
+            patch.set_facecolor('k')
+            # patch.set_edgecolor(coloring(index))
+            # patch.set_edgecolor('k')
+            # patch.set_hatch(pattern[index])
+            # patch.set_alpha(0.2)
+
 
     plt.xlabel('Linewidth (nm)', fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
@@ -99,12 +111,12 @@ def linewidth(line_width_all):
         label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
-    plt.legend(prop={'size':legend_fontsize})
+    # plt.legend(prop={'size':legend_fontsize})
     plt.grid(True)
 
     plt.savefig( (args.out_filename +'_width.png'))
     plt.savefig( (args.out_filename +'_width.pdf'))
-    pickle.dump(ax, file( (args.out_filename +'_width.pickle'), 'w'))
+    # pickle.dump(ax, file( (args.out_filename +'_width.pickle'), 'w'))
 
     print '--> saved figure ' + args.out_filename +'_width.png'
     print '--> saved figure ' + args.out_filename +'_width.pdf'
@@ -119,18 +131,26 @@ def zpl_postition(line_position_all):
 
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
-    binwidth = 5 #nm
-    n, bins, patches = plt.hist(line_position_all, bins = np.arange(700, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    binwidth = 1 #nm
+    # n, bins, patches = plt.hist(line_position_all, bins = np.arange(700, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=True, label=legend_entries)
+    n, bins, patches = plt.hist(line_position_all, bins = np.arange(735, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=False, align='left')#, label=legend_entries)
+    # n, bins, patches = plt.hist(line_position_all, bins = np.arange(735, max(np.concatenate(line_position_all)) + binwidth, binwidth), histtype='stepfilled', stacked=False, align='left', label=legend_entries)
 
     # prepare colors for histogram bars
-    coloring = plt.get_cmap(color_scale, len(patches)) #+1 to avoid white as color
-    # coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
+    # coloring = plt.get_cmap(color_scale, len(patches)) #+1 to avoid white as color
+    coloring = plt.get_cmap(color_scale, len(patches)+1) #+1 to avoid white as color
     # apply color
     for index, item in enumerate(patches):
         for patch in item:
-            patch.set_facecolor(coloring(index))
+            # patch.set_facecolor(coloring(index))
+            # patch.set_facecolor('none')
+            patch.set_facecolor('k')
+            # patch.set_edgecolor(coloring(index))
+            # patch.set_alpha(0.2)
+            # patch.set_edgecolor('k')
+            # patch.set_hatch(pattern[index])
 
-    plt.xlabel('ZPL Center (nm)', fontsize = label_fontsize)
+    plt.xlabel('Center Wavelength (nm)', fontsize = label_fontsize)
     plt.ylabel('Quantity', fontsize = label_fontsize)
     # plt.title('Title', fontsize = title_fontsize)
 
@@ -140,12 +160,12 @@ def zpl_postition(line_position_all):
         label.set_fontsize(tick_fontsize)
 
     plt.tight_layout()
-    legend = plt.legend(prop={'size':legend_fontsize})
+    # legend = plt.legend(prop={'size':legend_fontsize}, loc=1)
     plt.grid(True)
 
     plt.savefig( (args.out_filename +'_position.png'))
     plt.savefig( (args.out_filename +'_position.pdf'))
-    pickle.dump(ax, file( (args.out_filename +'_position.pickle'), 'w'))
+    # pickle.dump(ax, file( (args.out_filename +'_position.pickle'), 'w'))
 
     print '--> saved figure ' + args.out_filename +'_position.png'
     print '--> saved figure ' + args.out_filename +'_position.pdf'
@@ -159,21 +179,25 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
     ax = plt.subplot() # Defines ax variable by creating an empty plot; needed for tuning appearance, e.g. axis ticks font
 
     # prepare colors for markers
-    # coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid white as color
-    coloring = plt.get_cmap(color_scale, len(line_position_all)) #+1 to avoid white as color
+    coloring = plt.get_cmap(color_scale, len(line_position_all)+1) #+1 to avoid white as color
+    # coloring = plt.get_cmap(color_scale, len(line_position_all)) #+1 to avoid white as color
 
     plot_list = []
     # plot
     for index, (line, width, g2_exist) in enumerate( zip(line_position_all, line_width_all, g2_exist_all) ):
+        plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index))#, label = legend_entries[index])
         # plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index), label = legend_entries[index])
-        plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor='k', label = legend_entries[index])
+        # plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor=coloring(index), label = legend_entries[index])
+        # plot = plt.scatter(line, width, color='k', lw=0.5, s=50, marker='o', facecolor='k', label = legend_entries[index])
         plot_list.append(plot)
 
-        line_position_g2 = [p for p,g in zip(line, g2_exist) if g == 1]
-        line_width_g2 = [w for w,g in zip(width, g2_exist) if g == 1]
+        if args.g2:
+            line_position_g2 = [p for p,g in zip(line, g2_exist) if g == 1]
+            line_width_g2 = [w for w,g in zip(width, g2_exist) if g == 1]
 
-        plot = plt.scatter(line_position_g2, line_width_g2, edgecolor='r', lw=3, s=100, marker='o', facecolor = 'none')
-        plot_list.append(plot)
+            plot = plt.scatter(line_position_g2, line_width_g2, edgecolor='r', lw=3, s=100, marker='o', facecolor = 'none')
+
+            plot_list.append(plot)
 
 
     # fit data
@@ -187,7 +211,7 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
         line_position_temp2 = []
 
         for index,( item1, item2 ) in enumerate( zip( np.concatenate(line_width_all), np.concatenate(line_position_all) ) ):
-            if item1 >= 5:
+            if item1 >= 2:
                 # print line_width_all 
                 # print "\n\n"
                 # print np.concatenate(line_width_all)
@@ -195,7 +219,7 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
                 line_position_temp1.append( np.concatenate(line_position_all )[index] )
 
         for index,( item1, item2 ) in enumerate( zip( line_width_temp1, line_position_temp1 ) ):
-            if item2 >= 738:
+            if item2 >= 737 and item2 <=741:
                 # print line_width_all 
                 # print "\n\n"
                 # print np.concatenate(line_width_all)
@@ -229,16 +253,22 @@ def width_position(line_width_all, line_position_all, g2_exist_all, fit):
         plt.plot( line_position_fit , predict_line_position_all )
 
 
-    plt.xlabel('ZPL Center (nm)', fontsize = label_fontsize)
-    plt.ylabel('Width (nm)', fontsize = label_fontsize)
+    # plt.xlabel('Center Wavelength (nm)', fontsize = label_fontsize)
+    plt.xlabel('xc2 (nm)', fontsize = label_fontsize)
+    # plt.ylabel('Width (nm)', fontsize = label_fontsize)
+    plt.ylabel('xc3 (nm)', fontsize = label_fontsize)
     # plt.title('Title', fontsize = title_fontsize)
     # Set the tick labels font
     for label in (ax.get_xticklabels() + ax.get_yticklabels()):
         label.set_fontname('Arial')
         label.set_fontsize(tick_fontsize)
 
+    # set axes range
+    # plt.xlim(736, 742)
+    # plt.ylim(-1, 5)
+
     plt.tight_layout()
-    plt.ylim(0,plt.ylim()[1])
+    # plt.ylim(0,plt.ylim()[1])
     # legend = plt.legend(prop={'size':legend_fontsize})
     plt.grid(True)
 
